@@ -1,0 +1,31 @@
+127.0.0.1 - - [12/Feb/2026 11:43:31] "GET /api/stylists HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:43:31] "GET /api/slots?stylist_id=1 HTTP/1.1" 200 -
+/home/olavi/Desktop/hairdresserbooking/minimal_server.py:126: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  created_at = datetime.utcnow().isoformat() + 'Z'
+127.0.0.1 - - [12/Feb/2026 11:43:31] "POST /api/book HTTP/1.1" 201 -
+127.0.0.1 - - [12/Feb/2026 11:43:59] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:43:59] "GET /static/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:43:59] "GET /api/stylists HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:43:59] "GET /api/bookings HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:43:59] code 404, message Not Found
+127.0.0.1 - - [12/Feb/2026 11:43:59] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [12/Feb/2026 11:43:59] "GET /api/slots?stylist_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:44:09] "GET /admin HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:44:10] "GET /static/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:44:10] "GET /api/admin/bookings HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:49:06] "GET /admin HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:49:06] "GET /api/stylists HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:49:07] "GET /api/slots?stylist_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:49:07] "POST /api/book HTTP/1.1" 201 -
+127.0.0.1 - - [12/Feb/2026 11:49:24] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:49:25] "GET /static/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:49:25] "GET /api/stylists HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:49:25] "GET /api/bookings HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:49:25] code 404, message Not Found
+127.0.0.1 - - [12/Feb/2026 11:49:25] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [12/Feb/2026 11:49:25] "GET /api/slots?stylist_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:49:25] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:49:26] "GET /static/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:49:26] "GET /api/bookings HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:49:26] "GET /api/stylists HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 11:49:26] "GET /api/slots?stylist_id=1 HTTP/1.1" 200 -

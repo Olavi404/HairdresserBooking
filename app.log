@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/home/olavi/Desktop/hairdresserbooking/app.py", line 1, in <module>
+    from flask import Flask, render_template, jsonify, request
+ModuleNotFoundError: No module named 'flask'

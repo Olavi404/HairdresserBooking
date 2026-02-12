@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Hairdresser Booking</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Hairdresser Booking — <a href="/admin">Admin</a></h1>
+
+      <section id="booking">
+        <label>Stylist
+          <select id="stylist"></select>
+        </label>
+
+        <label>Slot
+          <select id="slot"></select>
+        </label>
+
+        <label>Name
+          <input id="name" />
+        </label>
+
+        <label>Phone
+          <input id="phone" />
+        </label>
+
+        <button id="book">Book</button>
+      </section>
+
+      <section>
+        <h2>Existing bookings</h2>
+        <ul id="bookings"></ul>
+      </section>
+    </main>
+
+    <script>
+    async function fetchJSON(url){ const r = await fetch(url); return r.json(); }
+
+    async function loadStylists(){
+      const list = await fetchJSON('/api/stylists');
+      const sel = document.getElementById('stylist');
+      sel.innerHTML = '';
+      list.forEach(s => {
+        const o = document.createElement('option'); o.value = s.id; o.textContent = s.name; sel.appendChild(o);
+      });
+      loadSlots();
+    }
+
+    async function loadSlots(){
+      const selS = document.getElementById('stylist');
+      const stylist_id = selS.value;
+      const slots = await fetchJSON('/api/slots?stylist_id=' + stylist_id);
+      const sel = document.getElementById('slot');
+      sel.innerHTML = '';
+      slots.forEach(s => {
+        const o = document.createElement('option'); o.value = JSON.stringify(s); o.textContent = s.date + ' ' + s.time; sel.appendChild(o);
+      });
+    }
+
+    async function loadBookings(){
+      const list = await fetchJSON('/api/bookings');
+      const ul = document.getElementById('bookings'); ul.innerHTML = '';
+      list.forEach(b => {
+        const li = document.createElement('li');
+        li.textContent = `${b.date} ${b.time} — stylist ${b.stylist_id} — ${b.customer_name}`;
+        ul.appendChild(li);
+      });
+    }
+
+    document.getElementById('stylist').addEventListener('change', loadSlots);
+    document.getElementById('book').addEventListener('click', async ()=>{
+      const stylist_id = parseInt(document.getElementById('stylist').value);
+      const slot = JSON.parse(document.getElementById('slot').value || '{}');
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      if(!slot.date || !name) { alert('Pick slot and enter name'); return; }
+      const res = await fetch('/api/book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({stylist_id, date:slot.date, time:slot.time, customer_name:name, customer_phone:phone})});
+      if(res.status===201){ alert('Booked'); loadSlots(); loadBookings(); } else { const e = await res.json(); alert(e.error || 'error'); }
+    });
+
+    // init
+    loadStylists(); loadBookings();
+    </script>
+  </body>
+</html>
