@@ -1,0 +1,15 @@
+[Unit]
+Description=Hairdresser Booking Flask App
+After=network.target
+
+[Service]
+User=webuser
+Group=www-data
+WorkingDirectory=/home/webuser/HairdresserBooking
+Environment="PATH=/home/webuser/HairdresserBooking/.venv/bin"
+ExecStart=/home/webuser/HairdresserBooking/.venv/bin/gunicorn -w 3 -b unix:/run/hairdresser.sock app:app
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

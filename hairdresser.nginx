@@ -1,0 +1,12 @@
+server {
+    server_name hairdresser.it.com www.hairdresser.it.com;
+
+    location /static/ {
+        alias /home/webuser/HairdresserBooking/static/;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/run/hairdresser.sock;
+    }
+}
