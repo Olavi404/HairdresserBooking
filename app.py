@@ -10,6 +10,11 @@ DB_PATH = os.environ.get('HAIR_DB') or os.path.join(BASE_DIR, 'data.db')
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
 
+Tip: You can undo Copilot's changes to any point by clicking Restore Checkpoint.
+
+now i have to create a domain so this porject is available and usable online
+
+
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -54,8 +59,8 @@ def generate_slots(days=7):
     return slots
 
 
-@app.before_first_request
-def ensure_db():
+# Initialize database on app startup (Flask 3.0+ compatible)
+with app.app_context():
     init_db()
 
 
