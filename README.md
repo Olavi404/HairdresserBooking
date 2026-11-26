@@ -1,6 +1,30 @@
+# Hairdresser Booking
+
+Educational appointment scheduling application with stylist availability, conflict detection and a booking administration interface.
+
+## Technology stack
+
+Python, Flask, SQLite, HTML, CSS and JavaScript.
+
+## Getting started
+
+Create a virtual environment, install `requirements.txt`, then run `python app.py`. Local address: `http://127.0.0.1:5000`.
+
+## Testing
+
+`pytest tests/`.
+
+## Scope and limitations
+
+Local demo only until privacy and authorization issues are resolved. No customer data should be used in public demonstrations.
+
+---
+
+## Original project documentation
+
 # Hairdresser Booking — Minimal App
 
-Simple demo booking system using Flask and in-memory storage.
+Simple demo booking system using Flask and SQLite storage.
 
 Quick start
 
