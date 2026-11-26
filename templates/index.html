@@ -65,7 +65,7 @@
       const ul = document.getElementById('bookings'); ul.innerHTML = '';
       list.forEach(b => {
         const li = document.createElement('li');
-        li.textContent = `${b.date} ${b.time} — stylist ${b.stylist_id} — ${b.customer_name}`;
+        li.textContent = `${b.date} ${b.time} — stylist ${b.stylist_id}`;
         ul.appendChild(li);
       });
     }

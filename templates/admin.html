@@ -10,6 +10,8 @@
     <main>
       <h1>Admin — Bookings</h1>
       <p><a href="/">Open public site</a></p>
+      <form method="post" action="/admin/logout"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button type="submit">Sign out</button></form>
+      <meta name="csrf-token" content="{{ csrf_token }}">
       <section>
         <table id="bookings" border="1" cellpadding="6">
           <thead><tr><th>Date</th><th>Time</th><th>Stylist</th><th>Customer</th><th>Phone</th><th>Action</th></tr></thead>
@@ -26,13 +28,17 @@
       const tbody = document.querySelector('#bookings tbody'); tbody.innerHTML = '';
       list.forEach(b => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${b.date}</td><td>${b.time}</td><td>${b.stylist_name} (${b.stylist_id})</td><td>${b.customer_name}</td><td>${b.customer_phone}</td><td><button data-id="${b.id}">Delete</button></td>`;
+        for (const value of [b.date, b.time, b.stylist_name + ' (' + b.stylist_id + ')', b.customer_name, b.customer_phone]) {
+          const td = document.createElement('td'); td.textContent = value ?? ''; tr.appendChild(td);
+        }
+        const td = document.createElement('td'); const button = document.createElement('button');
+        button.dataset.id = b.id; button.textContent = 'Delete'; td.appendChild(button); tr.appendChild(td);
         tbody.appendChild(tr);
       });
       document.querySelectorAll('#bookings button').forEach(btn => btn.addEventListener('click', async e => {
         const id = e.target.dataset.id;
         if(!confirm('Delete booking '+id+'?')) return;
-        const res = await fetch('/api/admin/bookings/'+id, {method:'DELETE'});
+        const res = await fetch('/api/admin/bookings/'+id, {method:'DELETE',headers:{'X-CSRF-Token':document.querySelector('meta[name="csrf-token"]').content}});
         if(res.ok) load(); else { const err = await res.json(); alert(err.error || 'error'); }
       }));
     }
