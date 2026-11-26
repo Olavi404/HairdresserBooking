@@ -3,6 +3,7 @@ from functools import wraps
 from werkzeug.security import check_password_hash
 import secrets
 import hmac
+import time as clock
 from datetime import datetime, timedelta
 import os
 import sqlite3
@@ -16,6 +17,26 @@ app.config.update(SECRET_KEY=os.getenv('FLASK_SECRET_KEY'),
                   SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE='Lax',
                   SESSION_COOKIE_SECURE=os.getenv('APP_ENV') == 'production',
                   PERMANENT_SESSION_LIFETIME=timedelta(hours=2))
+
+def consume_limit(scope, maximum, seconds=60):
+    # SQLite serializes increments across local server workers.
+    # Do not trust arbitrary X-Forwarded-For headers.
+    address = request.remote_addr or 'unknown'
+    now = int(clock.time())
+    bucket = now // seconds
+    conn = get_db_connection()
+    try:
+        conn.execute('BEGIN IMMEDIATE')
+        conn.execute('DELETE FROM request_limits WHERE expires_at <= ?', (now,))
+        conn.execute('INSERT INTO request_limits(scope,address,bucket,count,expires_at) VALUES(?,?,?,?,?) ON CONFLICT(scope,address,bucket) DO UPDATE SET count=count+1',
+                     (scope,address,bucket,1,(bucket+1)*seconds))
+        count = conn.execute('SELECT count FROM request_limits WHERE scope=? AND address=? AND bucket=?',(scope,address,bucket)).fetchone()[0]
+        conn.commit()
+        if count > maximum:
+            return jsonify(error='Too many requests'), 429, {'Retry-After': str((bucket+1)*seconds-now)}
+        return None
+    finally:
+        conn.close()
 
 def admin_enabled():
     return bool(app.secret_key and os.getenv('ADMIN_USERNAME') and os.getenv('ADMIN_PASSWORD_HASH'))
@@ -46,6 +67,9 @@ def admin_login():
     if not admin_enabled():
         return 'Administrator access not configured', 503
     if request.method == 'POST':
+        limited = consume_limit('login', 5)
+        if limited is not None:
+            return limited
         if not csrf_valid():
             abort(403)
         username = request.form.get('username', '')
@@ -104,6 +128,7 @@ def init_db():
             FOREIGN KEY (stylist_id) REFERENCES stylists(id)
         )
     ''')
+    cur.execute('CREATE TABLE IF NOT EXISTS request_limits (scope TEXT NOT NULL, address TEXT NOT NULL, bucket INTEGER NOT NULL, count INTEGER NOT NULL, expires_at INTEGER NOT NULL, PRIMARY KEY(scope,address,bucket))')
     # Fail closed rather than delete existing conflicting reservations.
     try:
         cur.execute('CREATE UNIQUE INDEX IF NOT EXISTS uq_booking_stylist_slot ON bookings(stylist_id, date, time)')
@@ -207,6 +232,9 @@ def admin_delete_booking(booking_id):
 
 @app.route('/api/book', methods=['POST'])
 def book():
+    limited = consume_limit('booking', 15)
+    if limited is not None:
+        return limited
     data = request.get_json(silent=True)
     if not isinstance(data, dict):
         return jsonify(error='Invalid JSON'), 400
